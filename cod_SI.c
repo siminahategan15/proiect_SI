@@ -1,7 +1,7 @@
 #include "stm32f4xx.h"
 #include <string.h>
 #include <stdio.h>
-#include "cod_SI"s
+#include "cod_SI"
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ void configure_buttons(void) {
 }
 
 int is_SW5_pressed(void) {
-    return (GPIOC->IDR & (1 << 8)); // Verifica daca pinul PC8 (SW5) este la nivel jos 
+    return (GPIOC->IDR & (1 << 8)); // Verifica daca pinul PC8 (SW5) este la nivel jos
 }
 
 void wait_for_SW5_press(void) {
@@ -31,12 +31,12 @@ void wait_for_SW5_press(void) {
 
 void configure_PC8(void)
 {
-    RCC->AHB1ENR |=  2;             
+    RCC->AHB1ENR |=  2;
     RCC->AHB1ENR |=  4;
 
-    GPIOB->MODER &= ~0x0000ff00;    
-    GPIOB->MODER |=  0x00005500;    
-    GPIOC->MODER &= ~0x00FF0000;    
+    GPIOB->MODER &= ~0x0000ff00;
+    GPIOB->MODER |=  0x00005500;
+    GPIOC->MODER &= ~0x00FF0000;
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------
@@ -46,11 +46,11 @@ void configure_PC8(void)
 char keypad_getkey(void)
 {
     int row, col;
-    outputEnableCols(0xF);     
-    writeCols(0xF);           
-    delay();                  
-    row = readRows();        
-    writeCols(0x0);             
+    outputEnableCols(0xF);
+    writeCols(0xF);
+    delay();
+    row = readRows();
+    writeCols(0x0);
     outputEnableCols(0x0);      // dezactiveaza coloanele
     if (row == 0) return 0;     // daca nu e nicio tasta apasata
 
@@ -58,11 +58,11 @@ char keypad_getkey(void)
      // activeaza cate o coloana si citeste randurile
     for (col = 0; col < 4; col++) {
         outputEnableCols(1 << col); // activeaza o coloana
-        writeCols(1 << col);        
-        delay();                    
+        writeCols(1 << col);
+        delay();
         row = readRows();           // citeste randurile
-        writeCols(0x0);             
-        if (row != 0) break;       
+        writeCols(0x0);
+        if (row != 0) break;
     }
 
     outputEnableCols(0x0);          // dezactiveaza coloanele
@@ -73,14 +73,14 @@ char keypad_getkey(void)
     if (row == 0x01) return 0 + col;    // tasta in randul 0
     if (row == 0x02) return 4 + col;    // tasta in randul 1
     if (row == 0x04) return 8 + col;    // tasta in randul 2
-    if (row == 0x08) return 12 + col;   // tasta in randul 3 
-		
-    return 0; 
+    if (row == 0x08) return 12 + col;   // tasta in randul 3
+
+    return 0;
 }
 
 // activeaza coloanele dupa bitii 3-0 ai lui n
 void outputEnableCols(char n) {
-    GPIOB->MODER &= ~0xFF000000;   
+    GPIOB->MODER &= ~0xFF000000;
 
 	 if (n & 1)
         GPIOB->MODER |=  0x01000000;
@@ -94,8 +94,8 @@ void outputEnableCols(char n) {
 
 // pune coloanele pe HIGH sau LOW dupa bitii 3-0 ai lui n
 void writeCols(char n) {
-    GPIOB->BSRR = 0xF0000000;   
-    GPIOB->BSRR = ((uint32_t)n << 12) | (n & 1); 
+    GPIOB->BSRR = 0xF0000000;
+    GPIOB->BSRR = ((uint32_t)n << 12) | (n & 1);
 }
 
 // citeste randurile
@@ -103,13 +103,13 @@ int readRows(void) {
 	return (GPIOC->IDR & 0x0F00) >> 8;
 }
 
-// initializare pini la tastatura 
+// initializare pini la tastatura
 void keypad_init(void) {
-    RCC->AHB1ENR |=  4;          
-    GPIOC->MODER &= ~0x00FF0000;    
+    RCC->AHB1ENR |=  4;
+    GPIOC->MODER &= ~0x00FF0000;
 
-    RCC->AHB1ENR |=  2;            
-    GPIOB->MODER &= ~0xFF000000;    
+    RCC->AHB1ENR |=  2;
+    GPIOB->MODER &= ~0xFF000000;
 }
 
 // Functia care va întoarce valoarea asociata butonului apasat
@@ -123,7 +123,7 @@ char get_keypad_value(int row, int col) {
 //-------------------------------------------------------------------------------------------------------------------------------------
 
 
-// bitii 3-0 ai lui n pentru stingere/aprindere LED-uri 
+// bitii 3-0 ai lui n pentru stingere/aprindere LED-uri
 void writeLEDs(char n) {
     GPIOB->BSRR = 0x00F00000;   // stingere Led-uri
     GPIOB->BSRR = n << 4;       // aprindere Led-uri
@@ -133,10 +133,10 @@ void writeLEDs(char n) {
 void update_LEDs(void) {
     if (system_state == LOCKED) {
         // Daca sistemul este blocat, aprinde LED-urile
-        GPIOB->BSRR = 0x000000FF;   
+        GPIOB->BSRR = 0x000000FF;
     } else {
         // Daca sistemul este deblocat, stinge LED-urile
-        GPIOB->BSRR = 0x00F00000;   
+        GPIOB->BSRR = 0x00F00000;
     }
 }
 
@@ -145,10 +145,10 @@ void update_LEDs(void) {
 //-------------------------------------------------------------------------------------------------------------------------------------
 
 void LCD_nibble_write(char data, unsigned char control) {
-    data &= 0xF0;     
-    control &= 0x0F;  
-    SPI1_write (data | control);         
-    SPI1_write (data | control | EN);      
+    data &= 0xF0;
+    control &= 0x0F;
+    SPI1_write (data | control);
+    SPI1_write (data | control | EN);
     delayMs(10);        // Asteapta 10 ms între scrierea fiecarui caracter
     // Verifica pozitia cursorului pentru a asigura afisarea pe un singur rând
     if (pozitie_cursor < NUMAR_MAXIM_CARACTERE_PE_RAND) {
@@ -164,37 +164,37 @@ void LCD_nibble_write(char data, unsigned char control) {
 }
 
 void LCD_command(unsigned char command) {
-    LCD_nibble_write(command & 0xF0, 0);    
-    LCD_nibble_write(command << 4, 0);      
+    LCD_nibble_write(command & 0xF0, 0);
+    LCD_nibble_write(command << 4, 0);
     if (command < 4)
-        delayMs(2);        
+        delayMs(2);
     else
-        delayMs(1);         
+        delayMs(1);
 }
 
 void LCD_data(char data) {
     GPIOA->BSRR = RS;
-    LCD_nibble_write(data & 0xF0, RS);      
-    LCD_nibble_write(data << 4, RS);        
+    LCD_nibble_write(data & 0xF0, RS);
+    LCD_nibble_write(data << 4, RS);
     delayMs(10);
 }
 
 void LCD_init(void) {
-    RCC->AHB1ENR |= 1;          
-    RCC->AHB1ENR |= 4;             
-    RCC->APB2ENR |= 0x1000;         
+    RCC->AHB1ENR |= 1;
+    RCC->AHB1ENR |= 4;
+    RCC->APB2ENR |= 0x1000;
 
-    GPIOA->MODER &= ~0x0000CC00;   
-    GPIOA->MODER |=  0x00008800;   
-    GPIOA->AFR[0] &= ~0xF0F00000;  
-    GPIOA->AFR[0] |=  0x50500000;  
+    GPIOA->MODER &= ~0x0000CC00;
+    GPIOA->MODER |=  0x00008800;
+    GPIOA->AFR[0] &= ~0xF0F00000;
+    GPIOA->AFR[0] |=  0x50500000;
 
-    GPIOA->MODER &= ~0x03000000;    
-    GPIOA->MODER |=  0x01000000;   
+    GPIOA->MODER &= ~0x03000000;
+    GPIOA->MODER |=  0x01000000;
 
     SPI1->CR1 = 0x31F;
     SPI1->CR2 = 0;
-    SPI1->CR1 |= 0x40;              
+    SPI1->CR1 |= 0x40;
 
     delayMs(20);
     LCD_nibble_write(0x30, 0);
@@ -203,13 +203,13 @@ void LCD_init(void) {
     delayMs(1);
     LCD_nibble_write(0x30, 0);
     delayMs(1);
-    LCD_nibble_write(0x20, 0);  
+    LCD_nibble_write(0x20, 0);
     delayMs(1);
     LCD_command(0x28);          // seteaza datele pe 4 biti, pe 2 linii, font de 5x7
     LCD_command(0x06);          // muta cursorul in dreapta
     LCD_command(0x01);          // sterge ecranul
-    LCD_command(0x0F);          
-		
+    LCD_command(0x0F);
+
 	pozitie_cursor = 0; // initializeaza pozitia cursorului
     caractere_scrise = 0; // initializeaza numarul de caractere scrise
 }
@@ -238,14 +238,14 @@ void lock_system(void) {
     LCD_data('e');
     LCD_data('d');
     LCD_data('!');
-		
+
     // Aprinde toate LED-urile în ro?u
-    GPIOB->BSRR = 0x000000FF;   
-    LCD_command(0x01); 
-	delayMs(200);	 
+    GPIOB->BSRR = 0x000000FF;
+    LCD_command(0x01);
+	delayMs(200);
 }
 
-// deblocarea sistemului 
+// deblocarea sistemului
 void unlock_system(void) {
     // Afiseaza un mesaj pe LCD pentru a indica ca sistemul este deblocat
     LCD_command(0x01);  // sterge ecranul
@@ -266,9 +266,9 @@ void unlock_system(void) {
     LCD_data('e');
     LCD_data('d');
     LCD_data('!');
-    
+
     // Stinge toate LED-urile
-    GPIOB->BSRR = 0x00F00000;  
+    GPIOB->BSRR = 0x00F00000;
 }
 
 void check_password(char *input) {
@@ -283,18 +283,18 @@ void check_password(char *input) {
 		LCD_data('r');
 		LCD_data('e');
 		LCD_data('c');
-		LCD_data('t');			
+		LCD_data('t');
     } else {
         // Daca parola este incorecta, afiseaza mesaj de eroare si decrementeaza numarul de încercari
-        // Aprinde LED-urile 
+        // Aprinde LED-urile
         LCD_data('w');
 		LCD_data('r');
 		LCD_data('o');
 		LCD_data('n');
 		LCD_data('g');
-			
+
         numar_incercari--;
-		GPIOB->BSRR = 0x000000FF; 
+		GPIOB->BSRR = 0x000000FF;
 		LCD_command(0x01);
 		delayMs(200);
 		if (numar_incercari == 0) {
@@ -323,7 +323,7 @@ void delayMs(int n) {
         for (i = 0; i < 3195; i++) ;
 }
 
-// 16 MHz, delay de 100 us 
+// 16 MHz, delay de 100 us
 void delay(void) {
 	int j;
 
@@ -332,11 +332,11 @@ void delay(void) {
 }
 
 void SPI1_write(unsigned char data) {
-    while (!(SPI1->SR & 2)) {}     
-    GPIOA->BSRR = 0x10000000;      
-    SPI1->DR = data;               
-    while (SPI1->SR & 0x80) {}     
-    GPIOA->BSRR = 0x00001000;      
+    while (!(SPI1->SR & 2)) {}
+    GPIOA->BSRR = 0x10000000;
+    SPI1->DR = data;
+    while (SPI1->SR & 0x80) {}
+    GPIOA->BSRR = 0x00001000;
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------
@@ -369,20 +369,20 @@ int main(void) {
     LCD_data('r');
     LCD_data('d');
     LCD_data(':');
-		
+
 	delayMs(100);
-		
+
 	LCD_command(0x01);
 	delayMs(200);
-    
+
     char input_password[MAX_PASSWORD_LENGTH + 1]; // +1 pentru caracterul NULL terminator
 	int numar_caractere_introduse = 0; // Numarul de caractere introduse de utilizator
 
     //initializare led-uri pentru display
-    RCC->AHB1ENR |=  2;             
-    GPIOB->MODER &= ~0x0000ff00;    
-    GPIOB->MODER |=  0x00005500;    
-		
+    RCC->AHB1ENR |=  2;
+    GPIOB->MODER &= ~0x0000ff00;
+    GPIOB->MODER |=  0x00005500;
+
 	char a[20];
 
     // În bucla principala, asteapta introducerea parolei si verifica parola
@@ -401,63 +401,63 @@ int main(void) {
 						LCD_data('2');
                 break;
 				case 2:
-                        user_password[numar_caractere_introduse] = '3'; 
+                        user_password[numar_caractere_introduse] = '3';
 				        numar_caractere_introduse++;
 				        LCD_data('3');
                 break;
 				case 3:
-                        user_password[numar_caractere_introduse] = 'A'; 
+                        user_password[numar_caractere_introduse] = 'A';
 						numar_caractere_introduse++;
 						LCD_data('A');
 				break;
         		case 5:
-                        user_password[numar_caractere_introduse] = '5'; 
+                        user_password[numar_caractere_introduse] = '5';
 						numar_caractere_introduse++;
 						LCD_data('5');
                 break;
                 case 6:
                         user_password[numar_caractere_introduse] = '6';
 						numar_caractere_introduse++;
-						LCD_data('6');					
+						LCD_data('6');
             	break;
 				case 7:
-                        user_password[numar_caractere_introduse] = 'B'; 
+                        user_password[numar_caractere_introduse] = 'B';
 						numar_caractere_introduse++;
-						LCD_data('B');							
+						LCD_data('B');
                 break;
 				case 9:
-                        user_password[numar_caractere_introduse] = '8'; 
+                        user_password[numar_caractere_introduse] = '8';
 						numar_caractere_introduse++;
 						LCD_data('8');
                 break;
 				case 10:
-                        user_password[numar_caractere_introduse] = '9'; 
+                        user_password[numar_caractere_introduse] = '9';
 						numar_caractere_introduse++;
 						LCD_data('9');
                 break;
 				case 11:
-                        user_password[numar_caractere_introduse] = 'C'; 
+                        user_password[numar_caractere_introduse] = 'C';
 						numar_caractere_introduse++;
 						LCD_data('C');
                 break;
 				case 13:
-                        user_password[numar_caractere_introduse] = '0'; 
+                        user_password[numar_caractere_introduse] = '0';
 						numar_caractere_introduse++;
 						LCD_data('0');
                 break;
-				case 14: 
-                        user_password[numar_caractere_introduse] = '#'; 
+				case 14:
+                        user_password[numar_caractere_introduse] = '#';
 						numar_caractere_introduse++;
-						LCD_data('#');				
+						LCD_data('#');
                 break;
-				case 15:              
+				case 15:
                         user_password[numar_caractere_introduse] = 'D'; // Adauga butonul la parola introdusa
 						numar_caractere_introduse++;
-						LCD_data('D');					
+						LCD_data('D');
                 break;
                 default:
                 break;
-					}					
+					}
 			}
             if (is_SW5_pressed()) {
                 // Daca utilizatorul a apasat butonul SW5, verifica parola introdusa
