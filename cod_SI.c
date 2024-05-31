@@ -1,7 +1,7 @@
 #include "stm32f4xx.h"
 #include <string.h>
 #include <stdio.h>
-#include "cod_SI"
+#include "cod_SI.h"
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------
@@ -313,6 +313,20 @@ void check_password(char *input) {
 			LCD_data('i');
 			LCD_data('n');
 			LCD_command(0x01);
+			delayMs(100);
+			LCD_data('n');
+			LCD_data('r');
+			LCD_data(' ');
+			LCD_data('t');
+			LCD_data('r');
+			LCD_data('i');
+			LCD_data('e');
+			LCD_data('s');
+			LCD_data(' ');
+			LCD_data(numar_incercari + '0');
+			LCD_data(' ');
+			LCD_command(0x01);
+			delayMs(100);
 		}
     }
 }
@@ -393,67 +407,69 @@ int main(void) {
             char key = keypad_getkey();  // Citeste butonul apasat de la tastatura matriceala
 			delayMs(10);
 			if (key >= 1 && key <= 15) {
+				LCD_data('*');
 
             switch (key) {
                 case 1:
                         user_password[numar_caractere_introduse] = '2'; // Adauga butonul la parola introdusa
 						numar_caractere_introduse++;
-						LCD_data('2');
+						//LCD_data('2');
+						
                 break;
 				case 2:
                         user_password[numar_caractere_introduse] = '3';
 				        numar_caractere_introduse++;
-				        LCD_data('3');
+				        //LCD_data('3');
                 break;
 				case 3:
                         user_password[numar_caractere_introduse] = 'A';
 						numar_caractere_introduse++;
-						LCD_data('A');
+						//LCD_data('A');
 				break;
         		case 5:
                         user_password[numar_caractere_introduse] = '5';
 						numar_caractere_introduse++;
-						LCD_data('5');
+						//LCD_data('5');
                 break;
                 case 6:
                         user_password[numar_caractere_introduse] = '6';
 						numar_caractere_introduse++;
-						LCD_data('6');
+						//LCD_data('6');
             	break;
 				case 7:
                         user_password[numar_caractere_introduse] = 'B';
 						numar_caractere_introduse++;
-						LCD_data('B');
+						//LCD_data('B');
                 break;
 				case 9:
                         user_password[numar_caractere_introduse] = '8';
 						numar_caractere_introduse++;
-						LCD_data('8');
+						//LCD_data('8');
                 break;
 				case 10:
                         user_password[numar_caractere_introduse] = '9';
 						numar_caractere_introduse++;
-						LCD_data('9');
+						//LCD_data('9');
                 break;
 				case 11:
                         user_password[numar_caractere_introduse] = 'C';
 						numar_caractere_introduse++;
-						LCD_data('C');
+						//LCD_data('C');
                 break;
 				case 13:
                         user_password[numar_caractere_introduse] = '0';
 						numar_caractere_introduse++;
-						LCD_data('0');
+						//LCD_data('0');
                 break;
 				case 14:
                         user_password[numar_caractere_introduse] = '#';
 						numar_caractere_introduse++;
-						LCD_data('#');
+						//LCD_data('#');
                 break;
 				case 15:
                         user_password[numar_caractere_introduse] = 'D'; // Adauga butonul la parola introdusa
 						numar_caractere_introduse++;
-						LCD_data('D');
+						//LCD_data('D');
                 break;
                 default:
                 break;
